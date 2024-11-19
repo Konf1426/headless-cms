@@ -1,0 +1,16 @@
+{
+  "name": "headless-cms",
+  "version": "1.0.0",
+  "devDependencies": {
+    "@symfony/webpack-encore": "2.1.0",
+    "webpack-notifier": "^1.15.0"
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "dev-server": "encore dev-server",
+    "dev": "encore dev",
+    "watch": "encore dev --watch",
+    "build": "encore production --progress"
+  }
+}
