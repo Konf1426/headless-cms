@@ -5,13 +5,18 @@ namespace App\Entity;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Api\Processor\CreateUserProcessor;
 use App\Api\Resource\CreateUser;
+use App\Doctrine\Enum\RoleEnum;
 use App\Doctrine\Enum\TableEnum;
 use App\Doctrine\Traits\UuidTrait;
 use App\Repository\UserRepository;
+use App\Validator\Constraint\UnregistredEmail;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -21,9 +26,15 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: TableEnum::USER)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-#[ApiResource]
-#[GetCollection(security: "is_granted('ROLE_USER')")]
-#[Post(input: CreateUser::class, processor: CreateUserProcessor::class)]
+#[ApiResource(
+    operations: [
+        new GetCollection(security: RoleEnum::IS_GRANTED_ADMIN),
+        new Get(security: RoleEnum::IS_ADMIN_OR_AUTHOR_OBJECT),
+        new Post(input: CreateUser::class, processor: CreateUserProcessor::class),
+        new Put(security: RoleEnum::IS_GRANTED_ADMIN),
+        new Delete(security: RoleEnum::IS_GRANTED_ADMIN),
+    ]
+)]
 #[ApiFilter(SearchFilter::class, properties: ['email' => 'partial'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -51,11 +62,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank]
     #[Assert\Length(min: 8, max: 255)]
     public ?string $password = null;
-
-    public function __construct()
-    {
-        $this->defineId();
-    }
 
     /**
      * @return string

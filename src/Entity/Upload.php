@@ -7,6 +7,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use App\Api\Action\UploadAction;
+use App\Doctrine\Enum\RoleEnum;
 use App\Doctrine\Enum\TableEnum;
 use App\Doctrine\Traits\TimestampableTrait;
 use App\Doctrine\Traits\UuidTrait;
@@ -15,10 +16,11 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 #[ORM\Table(name: TableEnum::UPLOAD)]
 #[Get]
-#[Post(controller: UploadAction::class, deserialize: false)]
+#[Post(controller: UploadAction::class, security: RoleEnum::IS_GRANTED_ADMIN, deserialize: false)]
 class Upload
 {
-    use UuidTrait, TimestampableTrait;
+    use UuidTrait;
+    use TimestampableTrait;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     public ?string $filename = null;
@@ -28,9 +30,4 @@ class Upload
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     public ?string $mimeType = null;
-
-    public function __construct()
-    {
-        $this->defineId();
-    }
 }

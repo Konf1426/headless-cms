@@ -2,6 +2,10 @@
   "name": "headless-cms",
   "version": "1.0.0",
   "devDependencies": {
+    "@hotwired/stimulus": "^3.0.0",
+    "@hotwired/turbo": "^7.1.1 || ^8.0",
+    "@symfony/stimulus-bridge": "^3.2.0",
+    "@symfony/ux-turbo": "file:vendor/symfony/ux-turbo/assets",
     "@symfony/webpack-encore": "2.1.0",
     "webpack-notifier": "^1.15.0"
   },

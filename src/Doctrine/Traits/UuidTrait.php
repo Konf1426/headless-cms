@@ -17,7 +17,7 @@ trait UuidTrait
     #[ApiProperty(writable: false, identifier: true)]
     public ?Uuid $id;
 
-    public function defineId(): void
+    public function __construct()
     {
         $this->id ??= Uuid::v4();
     }

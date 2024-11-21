@@ -21,7 +21,6 @@ class NewUserCommand extends Command
         private readonly EntityManagerInterface $em,
         private readonly UserPasswordHasherInterface $hasher,
         private readonly ValidatorInterface $validator
-
     ) {
         parent::__construct();
     }
