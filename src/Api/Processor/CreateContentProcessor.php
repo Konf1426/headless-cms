@@ -9,6 +9,7 @@ use ApiPlatform\State\ProcessorInterface;
 use App\Entity\Content;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use InvalidArgumentException;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -37,7 +38,7 @@ final readonly class CreateContentProcessor implements ProcessorInterface
 
         $violations = $this->validator->validate($content);
         if ($violations->count() > 0) {
-            throw new \InvalidArgumentException((string) $violations->get(0)->getMessage());
+            throw new InvalidArgumentException((string) $violations->get(0)->getMessage());
         }
 
         $this->em->persist($content);

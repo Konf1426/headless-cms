@@ -8,6 +8,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use InvalidArgumentException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 final readonly class CreateUserProcessor implements ProcessorInterface
@@ -18,13 +19,6 @@ final readonly class CreateUserProcessor implements ProcessorInterface
     ) {
     }
 
-    /**
-     * @param mixed $data
-     * @param Operation $operation
-     * @param array $uriVariables
-     * @param array $context
-     * @return User
-     */
     public function process(
         mixed $data,
         Operation $operation,
@@ -33,7 +27,7 @@ final readonly class CreateUserProcessor implements ProcessorInterface
     ): User {
         $user = new User();
         if (!filter_var($data->email, FILTER_VALIDATE_EMAIL)) {
-            throw new \InvalidArgumentException('Invalid email');
+            throw new InvalidArgumentException('Invalid email');
         }
 
         $user->email = $data->email;

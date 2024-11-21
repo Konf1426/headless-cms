@@ -13,6 +13,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Throwable;
 
 #[AsCommand(name: 'app:new-user', description: 'Creates a new user')]
 class NewUserCommand extends Command
@@ -63,7 +64,7 @@ class NewUserCommand extends Command
             $output->writeln(sprintf('<info>Utilisateur "%s" créé en base de données.</info>', $email));
             $this->em->persist($user);
             $this->em->flush();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
             return Command::FAILURE;
         }

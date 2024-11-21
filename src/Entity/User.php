@@ -16,7 +16,6 @@ use App\Doctrine\Enum\RoleEnum;
 use App\Doctrine\Enum\TableEnum;
 use App\Doctrine\Traits\UuidTrait;
 use App\Repository\UserRepository;
-use App\Validator\Constraint\UnregistredEmail;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -53,6 +52,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Length(min: 5, max: 180)]
     public ?string $email = null;
 
+    /**
+     * @var string[]
+     */
     #[ORM\Column]
     #[Assert\NotBlank]
     public array $roles = [];

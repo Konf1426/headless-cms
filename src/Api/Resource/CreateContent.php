@@ -17,7 +17,7 @@ class CreateContent
     public ?string $content = null;
 
     /**
-     * @var array|null
+     * @var string[]
      */
     public ?array $tags = null;
 }

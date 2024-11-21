@@ -36,7 +36,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
     order: ['createdAt' => 'DESC']
 )]
-#[ApiFilter(SearchFilter::class, properties: ['content.id' => 'exact'])]
+#[ApiFilter(SearchFilter::class, properties: ['content.slug' => 'exact'])]
 class Comment
 {
     use UuidTrait;
