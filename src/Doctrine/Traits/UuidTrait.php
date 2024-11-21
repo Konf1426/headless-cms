@@ -14,9 +14,10 @@ trait UuidTrait
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\GeneratedValue(strategy: "NONE")]
+    #[ApiProperty(writable: false, identifier: true)]
     public ?Uuid $id;
 
-    public function defineId(): void
+    public function __construct()
     {
         $this->id ??= Uuid::v4();
     }

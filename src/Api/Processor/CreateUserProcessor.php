@@ -18,6 +18,13 @@ final readonly class CreateUserProcessor implements ProcessorInterface
     ) {
     }
 
+    /**
+     * @param mixed $data
+     * @param Operation $operation
+     * @param array $uriVariables
+     * @param array $context
+     * @return User
+     */
     public function process(
         mixed $data,
         Operation $operation,
