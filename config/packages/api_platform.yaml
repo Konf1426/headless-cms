@@ -1,12 +1,19 @@
 api_platform:
     title: API Platform
-    version: 1.0.0
+    version: 4.0.9
     defaults:
         stateless: true
         cache_headers:
             vary: ['Content-Type', 'Authorization', 'Origin']
+        normalization_context:
+            skip_null_values: false
     swagger:
         api_keys:
             Token:
                 name: Authorization
                 type: header
+    use_symfony_listeners: true
+    mapping:
+        paths:
+            - '%kernel.project_dir%/src/Entity'
+            - '%kernel.project_dir%/src/Api/Resource'
