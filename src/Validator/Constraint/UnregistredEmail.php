@@ -21,4 +21,12 @@ class UnregistredEmail extends Constraint
         parent::__construct([], $groups, $payload);
         $this->message = $message ?? $this->message;
     }
+
+    /**
+     * @return string
+     */
+    public function validatedBy(): string
+    {
+        return 'App\Validator\UnregistredEmailValidator';
+    }
 }

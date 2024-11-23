@@ -11,8 +11,10 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
+use App\Api\Processor\CreateCommentProcessor;
+use App\Api\Resource\CreateComment;
 use App\Doctrine\Enum\TableEnum;
 use App\Doctrine\Enum\RoleEnum;
 use App\Doctrine\Traits\UuidTrait;
@@ -25,10 +27,22 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: TableEnum::COMMENT)]
 #[ApiResource(
     operations: [
-        new GetCollection(),
-        new Get(),
-        new Post(security: RoleEnum::IS_GRANTED_USER),
-        new Put(
+        new GetCollection(
+            normalizationContext: ['groups' => ['comment:read']],
+            security: RoleEnum::IS_GRANTED_USER
+        ),
+        new Get(
+            normalizationContext: ['groups' => ['comment:read']],
+            security: RoleEnum::IS_GRANTED_USER
+        ),
+        new Post(
+            normalizationContext: ['groups' => ['comment:read']],
+            security: RoleEnum::IS_GRANTED_USER,
+            input: CreateComment::class,
+            processor: CreateCommentProcessor::class
+        ),
+        new Patch(
+            normalizationContext: ['groups' => ['comment:read']],
             denormalizationContext: ['groups' => ['comment:update']],
             security: RoleEnum::IS_AUTHOR_OBJECT
         ),
@@ -44,13 +58,15 @@ class Comment
 
     #[ORM\Column(type: 'text')]
     #[Assert\NotBlank]
-    #[Groups(['comment:update'])]
+    #[Groups(['comment:read', 'comment:update'])]
     public string $message;
 
     #[ORM\ManyToOne(targetEntity: Content::class)]
+    #[Groups(['comment:read'])]
     public ?Content $content = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ApiProperty(writable: false)]
+    #[ApiProperty(readable: true, writable: false)]
+    #[Groups(['comment:read'])]
     public ?User $author = null;
 }

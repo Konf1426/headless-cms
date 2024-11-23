@@ -41,6 +41,9 @@ final class TokenAuthenticator extends AbstractAuthenticator
     public function authenticate(Request $request): Passport
     {
         $token = $request->headers->get('Authorization');
+        if (!$token) {
+            throw new AuthenticationException('Authorization header is required.');
+        }
 
         return new SelfValidatingPassport(new UserBadge($token, function (string $token): ?User {
             if (null !== $email = $this->tokens->decodeUserToken($token)) {
@@ -49,7 +52,6 @@ final class TokenAuthenticator extends AbstractAuthenticator
 
             return null;
         }));
-
     }
 
     /**
