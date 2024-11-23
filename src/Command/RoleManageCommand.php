@@ -12,6 +12,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Throwable;
 
 #[AsCommand(name: 'app:role-manage', description: 'Manage user roles')]
 class RoleManageCommand extends Command
@@ -19,7 +20,6 @@ class RoleManageCommand extends Command
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly ValidatorInterface $validator
-
     ) {
         parent::__construct();
     }
@@ -79,10 +79,12 @@ class RoleManageCommand extends Command
 
             $output->writeln(sprintf(
                 '<info>Rôle "%s" %s à l\'utilisateur "%s".</info>',
-                $role, $action === 'add' ? 'ajouté' : 'retiré', $email
+                $role,
+                $action === 'add' ? 'ajouté' : 'retiré',
+                $email
             ));
             $this->em->flush();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
             return Command::FAILURE;
         }

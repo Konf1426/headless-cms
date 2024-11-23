@@ -8,18 +8,18 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
 use App\Api\Processor\CreateUserProcessor;
 use App\Api\Resource\CreateUser;
 use App\Doctrine\Enum\RoleEnum;
 use App\Doctrine\Enum\TableEnum;
 use App\Doctrine\Traits\UuidTrait;
 use App\Repository\UserRepository;
-use App\Validator\Constraint\UnregistredEmail;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\Ignore;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -29,9 +29,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     operations: [
         new GetCollection(security: RoleEnum::IS_GRANTED_ADMIN),
-        new Get(security: RoleEnum::IS_ADMIN_OR_AUTHOR_OBJECT),
+        new Get(security: RoleEnum::IS_ADMIN_OR_USER_OBJECT),
         new Post(input: CreateUser::class, processor: CreateUserProcessor::class),
-        new Put(security: RoleEnum::IS_GRANTED_ADMIN),
+        new Patch(
+            denormalizationContext: ['groups' => ['user:update']],
+            security: RoleEnum::IS_ADMIN_OR_USER_OBJECT
+        ),
         new Delete(security: RoleEnum::IS_GRANTED_ADMIN),
     ]
 )]
@@ -42,10 +45,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180, nullable: true)]
     #[Assert\Length(min: 1, max: 180)]
+    #[Groups(['comment:read', 'user:update', 'content:read'])]
     public ?string $firstname = null;
 
     #[ORM\Column(length: 180, nullable: true)]
     #[Assert\Length(min: 1, max: 180)]
+    #[Groups(['comment:read', 'user:update', 'content:read'])]
     public ?string $lastname = null;
 
     #[ORM\Column(length: 180)]
@@ -53,8 +58,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Length(min: 5, max: 180)]
     public ?string $email = null;
 
+    /**
+     * @var string[]
+     */
     #[ORM\Column]
-    #[Assert\NotBlank]
     public array $roles = [];
 
     #[ORM\Column]

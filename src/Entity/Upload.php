@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use App\Api\Action\UploadAction;
 use App\Doctrine\Enum\RoleEnum;
@@ -15,8 +17,13 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: TableEnum::UPLOAD)]
-#[Get]
-#[Post(controller: UploadAction::class, security: RoleEnum::IS_GRANTED_ADMIN, deserialize: false)]
+#[ApiResource(
+    operations: [
+        new GetCollection(),
+        new Get(),
+        new Post(controller: UploadAction::class, security: RoleEnum::IS_GRANTED_ADMIN, deserialize: false),
+    ]
+)]
 class Upload
 {
     use UuidTrait;

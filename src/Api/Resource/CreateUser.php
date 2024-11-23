@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Api\Resource;
 
+use App\Validator\Constraint\UnregistredEmail;
+
 class CreateUser
 {
     /**
      * @var string|null
      */
+    #[UnregistredEmail]
     public ?string $email = null;
 
     /**

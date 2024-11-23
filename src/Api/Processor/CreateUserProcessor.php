@@ -7,40 +7,44 @@ namespace App\Api\Processor;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Entity\User;
+use App\Validator\Constraint\UnregistredEmail;
+use App\Validator\UnregistredEmailValidator;
 use Doctrine\ORM\EntityManagerInterface;
+use InvalidArgumentException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
+/**
+ * @implements ProcessorInterface<User, Operation>
+ */
 final readonly class CreateUserProcessor implements ProcessorInterface
 {
     public function __construct(
         private EntityManagerInterface $em,
-        private UserPasswordHasherInterface $hasher
+        private UserPasswordHasherInterface $hasher,
+        private UnregistredEmailValidator $validator
     ) {
     }
 
     /**
      * @param mixed $data
      * @param Operation $operation
-     * @param array $uriVariables
-     * @param array $context
-     * @return User
+     * @param array<string, mixed> $uriVariables
+     * @param array<string, mixed> $context
+     * @return object
      */
     public function process(
         mixed $data,
         Operation $operation,
         array $uriVariables = [],
         array $context = [],
-    ): User {
+    ): object {
         $user = new User();
-        if (!filter_var($data->email, FILTER_VALIDATE_EMAIL)) {
-            throw new \InvalidArgumentException('Invalid email');
-        }
+        $this->validator->validate($data->email, new UnregistredEmail());
 
         $user->email = $data->email;
         $user->password = $this->hasher->hashPassword($user, $data->password);
         $user->firstname = $data->firstname;
         $user->lastname = $data->lastname;
-        $user->roles = ['ROLE_USER'];
 
         $this->em->persist($user);
         $this->em->flush();

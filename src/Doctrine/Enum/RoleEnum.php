@@ -34,5 +34,10 @@ class RoleEnum
     /**
      * @var string
      */
-    public const IS_ADMIN_OR_AUTHOR_OBJECT = RoleEnum::IS_GRANTED_ADMIN . " or object.author == user";
+    public const IS_ADMIN_OR_AUTHOR_OBJECT =  "is_granted('ROLE_ADMIN') or object.author == user";
+
+    /**
+     * @var string
+     */
+    public const IS_ADMIN_OR_USER_OBJECT =  "is_granted('ROLE_ADMIN') or object == user";
 }

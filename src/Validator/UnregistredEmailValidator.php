@@ -18,6 +18,11 @@ class UnregistredEmailValidator extends ConstraintValidator
     ) {
     }
 
+    /**
+     * @param mixed $value
+     * @param Constraint $constraint
+     * @return void
+     */
     public function validate(mixed $value, Constraint $constraint): void
     {
         if (!$constraint instanceof UnregistredEmail) {
