@@ -40,6 +40,10 @@ readonly class UploadAction
         }
 
         $path = uniqid() . "." . $file->getClientOriginalExtension();
+
+        if (!file_exists($this->projectDir.'/public/upload')) {
+            mkdir($this->projectDir.'/public/upload', 0777, true);
+        }
         $file->move($this->projectDir.'/public/upload', $path);
 
         $upload = new Upload();
