@@ -30,7 +30,7 @@ readonly class UploadAction
     {
         $file = $request->files->get('file');
         if (!$file instanceof UploadedFile) {
-            throw new BadRequestHttpException();
+            throw new BadRequestHttpException('File is not valid');
         }
         if ($file->getSize() > 2 * 1024 * 1024) {
             throw new BadRequestHttpException('File is too large');

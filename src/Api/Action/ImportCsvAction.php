@@ -34,7 +34,7 @@ readonly class ImportCsvAction
     {
         $file = $request->files->get('file');
         if (!$file instanceof UploadedFile || $file->getClientOriginalExtension() !== 'csv') {
-            throw new BadRequestHttpException();
+            throw new BadRequestHttpException('Invalid file type. Only CSV files are allowed.');
         }
 
         $fileContent = file($file->getPathname());

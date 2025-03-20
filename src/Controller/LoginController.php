@@ -39,15 +39,15 @@ class LoginController extends AbstractController
         }
 
         $user = $this->em->getRepository(User::class)->findOneBy(['email' => $login->email]);
-        if (!$user) {
-            throw $this->createAccessDeniedException();
-        }
-
-        if (!$this->passwordHasher->isPasswordValid($user, $login->password)) {
-            return $this->json(['error' => 'Invalid credentials.']);
+        if (!$user || !$this->passwordHasher->isPasswordValid($user, $login->password)) {
+            return $this->json([
+                'result' => false,
+                'error' => 'Le login ou le mot de passe est incorrect.'
+            ]);
         }
 
         return $this->json([
+            'result' => true,
             'userId' => $user->id,
             'token' => $this->token->generateTokenForUser($user->email)
         ]);
