@@ -47,6 +47,9 @@ class LoginController extends AbstractController
             return $this->json(['error' => 'Invalid credentials.']);
         }
 
-        return $this->json(['token' => $this->token->generateTokenForUser($user->email)]);
+        return $this->json([
+            'userId' => $user->id,
+            'token' => $this->token->generateTokenForUser($user->email)
+        ]);
     }
 }
