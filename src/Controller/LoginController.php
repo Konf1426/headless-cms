@@ -48,6 +48,7 @@ class LoginController extends AbstractController
 
         return $this->json([
             'result' => true,
+            'user' => $user,
             'userId' => $user->id,
             'token' => $this->token->generateTokenForUser($user->email)
         ]);
