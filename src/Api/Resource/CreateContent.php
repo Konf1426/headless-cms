@@ -17,7 +17,17 @@ class CreateContent
     public ?string $content = null;
 
     /**
+     * @var string|null
+     */
+    public ?string $metaDescription = null;
+
+    /**
      * @var string[]
      */
     public ?array $tags = null;
+
+    /**
+     * @var string|null
+     */
+    public ?string $cover = null;
 }

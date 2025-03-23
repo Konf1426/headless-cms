@@ -17,6 +17,6 @@ class CreateComment
     /**
      * @var string
      */
-    #[Assert\Uuid]
-    public string $contentId;
+    #[Assert\NotBlank]
+    public string $contentSlug;
 }

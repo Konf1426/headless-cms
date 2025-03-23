@@ -24,8 +24,7 @@ final readonly class CreateCommentProcessor implements ProcessorInterface
         private EntityManagerInterface $em,
         private ValidatorInterface $validator,
         private Security $security
-    ) {
-    }
+    ) {}
 
     /**
      * @param mixed $data
@@ -44,7 +43,8 @@ final readonly class CreateCommentProcessor implements ProcessorInterface
         $user = $this->security->getUser();
 
         /** @var CreateComment $data */
-        $content = $this->em->getRepository(Content::class)->find($data->contentId);
+        $content = $this->em->getRepository(Content::class)->findOneBy(['slug' => $data->contentSlug]);
+
         if (!$content) {
             throw new InvalidArgumentException('Content not found');
         }
