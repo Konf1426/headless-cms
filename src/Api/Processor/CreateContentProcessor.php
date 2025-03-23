@@ -7,6 +7,7 @@ namespace App\Api\Processor;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Entity\Content;
+use App\Entity\Upload;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
@@ -22,8 +23,7 @@ final readonly class CreateContentProcessor implements ProcessorInterface
         private EntityManagerInterface $em,
         private ValidatorInterface $validator,
         private Security $security
-    ) {
-    }
+    ) {}
 
     /**
      * @param mixed $data
@@ -43,8 +43,17 @@ final readonly class CreateContentProcessor implements ProcessorInterface
         $content = new Content();
         $content->title = $data->title;
         $content->content = $data->content;
+        $content->metaDescription = $data->metaDescription;
         $content->tags = $data->tags;
         $content->author = $user;
+
+        if ($data->cover) {
+            $upload = $this->em->getRepository(Upload::class)->find($data->cover);
+            if (!$upload) {
+                throw new InvalidArgumentException('Upload not found');
+            }
+            $content->cover = $upload;
+        }
 
         $violations = $this->validator->validate($content);
         if ($violations->count() > 0) {
