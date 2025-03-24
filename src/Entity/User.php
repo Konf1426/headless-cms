@@ -62,6 +62,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string[]
      */
     #[ORM\Column]
+    #[Groups(['user:update'])]
     public array $roles = [];
 
     #[ORM\Column]
@@ -109,7 +110,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see UserInterface
      */
-    public function eraseCredentials(): void
-    {
-    }
+    public function eraseCredentials(): void {}
 }
