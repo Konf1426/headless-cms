@@ -36,7 +36,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new Post(
             normalizationContext: ['groups' => ['content:read']],
-            security: RoleEnum::IS_GRANTED_ADMIN_AND_AUTHOR,
+            security: RoleEnum::IS_GRANTED_ADMIN_OR_AUTHOR,
             input: CreateContent::class,
             processor: CreateContentProcessor::class
         ),
