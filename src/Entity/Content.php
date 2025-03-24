@@ -50,7 +50,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
     order: ['createdAt' => 'DESC']
 )]
-#[ApiFilter(SearchFilter::class, properties: ['title' => 'partial'])]
+#[ApiFilter(SearchFilter::class, properties: ['title' => 'partial', 'author.email' => 'exact'])]
 class Content
 {
     use UuidTrait;
