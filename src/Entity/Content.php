@@ -50,7 +50,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
     order: ['createdAt' => 'DESC']
 )]
-#[ApiFilter(SearchFilter::class, properties: ['title' => 'partial'])]
+#[ApiFilter(SearchFilter::class, properties: ['title' => 'partial', 'author.email' => 'exact'])]
 class Content
 {
     use UuidTrait;
@@ -63,7 +63,7 @@ class Content
     public string $title;
 
     #[ORM\ManyToOne(targetEntity: Upload::class)]
-    #[Groups(['content:read'])]
+    #[Groups(['content:read', 'content:update'])]
     public ?Upload $cover = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -95,7 +95,7 @@ class Content
     public ?array $tags = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name:'author_id', nullable: true)]
+    #[ORM\JoinColumn(name: 'author_id', nullable: true)]
     #[ApiProperty(writable: false)]
     #[Groups(['content:read'])]
     public ?User $author = null;

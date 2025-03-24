@@ -29,7 +29,6 @@ use Symfony\Component\Validator\Constraints as Assert;
     operations: [
         new GetCollection(
             normalizationContext: ['groups' => ['comment:read']],
-            security: RoleEnum::IS_GRANTED_USER
         ),
         new Get(
             normalizationContext: ['groups' => ['comment:read']],
