@@ -36,7 +36,8 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new Post(
             normalizationContext: ['groups' => ['content:read']],
-            security: RoleEnum::IS_GRANTED_ADMIN_OR_AUTHOR,
+            denormalizationContext: ['groups' => ['content:create']], // Ajouté pour hydratation
+            security: RoleEnum::IS_GRANTED_ADMIN,
             input: CreateContent::class,
             processor: CreateContentProcessor::class
         ),
@@ -59,7 +60,7 @@ class Content
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 1, max: 255)]
-    #[Groups(['content:read', 'content:update'])]
+    #[Groups(['content:read', 'content:create', 'content:update'])]
     public string $title;
 
     #[ORM\ManyToOne(targetEntity: Upload::class)]
@@ -68,16 +69,16 @@ class Content
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Length(min: 1, max: 255)]
-    #[Groups(['content:read', 'content:update'])]
+    #[Groups(['content:read', 'content:create', 'content:update'])]
     public ?string $metaTitle = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    #[Groups(['content:read', 'content:update'])]
+    #[Groups(['content:read', 'content:create', 'content:update'])]
     public ?string $metaDescription = null;
 
     #[ORM\Column(type: 'text')]
     #[Assert\NotBlank]
-    #[Groups(['content:update', 'content:read-item'])]
+    #[Groups(['content:read', 'content:create', 'content:update', 'content:read-item'])]
     public ?string $content = null;
 
     #[ORM\Column(type: 'string', length: 255)]
@@ -87,11 +88,15 @@ class Content
     #[Groups(['content:read'])]
     public ?string $slug = null;
 
+    #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups(['content:read', 'content:create', 'content:update'])]
+    public ?string $description = null;
+
     /**
      * @var string[]|null
      */
     #[ORM\Column(type: 'json', nullable: true)]
-    #[Groups(['content:read', 'content:update'])]
+    #[Groups(['content:read', 'content:create', 'content:update'])]
     public ?array $tags = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]

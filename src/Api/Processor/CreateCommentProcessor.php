@@ -53,11 +53,14 @@ final readonly class CreateCommentProcessor implements ProcessorInterface
         $comment->message = $data->message;
         $comment->content = $content;
         $comment->author = $user;
+        $comment->setCreatedAt();
+        $comment->setUpdatedAt();
 
         $violations = $this->validator->validate($content);
         if ($violations->count() > 0) {
             throw new InvalidArgumentException((string) $violations->get(0)->getMessage());
         }
+        
 
         $this->em->persist($comment);
         $this->em->flush();

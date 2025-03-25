@@ -28,7 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[ApiResource(
     operations: [
-        new GetCollection(security: RoleEnum::IS_GRANTED_ADMIN),
+        new GetCollection,
         new Get(security: RoleEnum::IS_ADMIN_OR_USER_OBJECT),
         new Post(input: CreateUser::class, processor: CreateUserProcessor::class),
         new Patch(
@@ -56,7 +56,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180)]
     #[Assert\Email]
     #[Assert\Length(min: 5, max: 180)]
-    public string $email;
+    #[Groups(['comment:read', 'user:update', 'content:read'])] // ✅ Ajout ici
+    public ?string $email = null;
 
     /**
      * @var string[]
@@ -71,44 +72,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Length(min: 8, max: 255)]
     public ?string $password = null;
 
-    /**
-     * @return string
-     */
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
     }
 
-    /**
-     * @return array|string[]
-     */
     public function getRoles(): array
     {
         $roles = $this->roles;
         $roles[] = 'ROLE_USER';
+
         return array_unique($roles);
     }
 
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
     public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    /**
-     * @param string $password
-     * @return $this
-     */
     public function setPassword(string $password): static
     {
         $this->password = $password;
         return $this;
     }
 
+<<<<<<< HEAD
     /**
      * @see UserInterface
      */
+=======
+>>>>>>> fd66fed (Correction back pour article et debut commentaires)
     public function eraseCredentials(): void {}
 }

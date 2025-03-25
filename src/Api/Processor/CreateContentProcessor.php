@@ -40,12 +40,21 @@ final readonly class CreateContentProcessor implements ProcessorInterface
     ): object {
         /** @var ?User $user */
         $user = $this->security->getUser();
+
         $content = new Content();
         $content->title = $data->title;
         $content->content = $data->content;
         $content->metaDescription = $data->metaDescription;
         $content->tags = $data->tags;
+
+        // ✅ Ajout des champs manquants
+        $content->metaTitle = $data->metaTitle ?? null;
+        $content->metaDescription = $data->metaDescription ?? null;
+        $content->description = $data->description ?? null;
+
         $content->author = $user;
+        $content->setCreatedAt();
+        $content->setUpdatedAt();
 
         if ($data->cover) {
             $upload = $this->em->getRepository(Upload::class)->find($data->cover);
@@ -62,6 +71,7 @@ final readonly class CreateContentProcessor implements ProcessorInterface
 
         $this->em->persist($content);
         $this->em->flush();
+
         return $content;
     }
 }

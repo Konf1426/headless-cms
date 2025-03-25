@@ -18,8 +18,8 @@ use App\Api\Resource\CreateComment;
 use App\Doctrine\Enum\TableEnum;
 use App\Doctrine\Enum\RoleEnum;
 use App\Doctrine\Traits\UuidTrait;
-use Doctrine\ORM\Mapping as ORM;
 use App\Doctrine\Traits\TimestampableTrait;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -29,23 +29,24 @@ use Symfony\Component\Validator\Constraints as Assert;
     operations: [
         new GetCollection(
             normalizationContext: ['groups' => ['comment:read']],
+            security: "is_granted('ROLE_USER')"
         ),
         new Get(
             normalizationContext: ['groups' => ['comment:read']],
-            security: RoleEnum::IS_GRANTED_USER
+            security: "is_granted('ROLE_USER')"
         ),
         new Post(
             normalizationContext: ['groups' => ['comment:read']],
-            security: RoleEnum::IS_GRANTED_USER,
+            security: "is_granted('ROLE_USER')",
             input: CreateComment::class,
             processor: CreateCommentProcessor::class
         ),
         new Patch(
             normalizationContext: ['groups' => ['comment:read']],
             denormalizationContext: ['groups' => ['comment:update']],
-            security: RoleEnum::IS_AUTHOR_OBJECT
+            security: "is_granted('ROLE_USER') and object.author == user"
         ),
-        new Delete(security: RoleEnum::IS_ADMIN_OR_AUTHOR_OBJECT),
+        new Delete(security: "is_granted('ROLE_ADMIN') or (is_granted('ROLE_USER') and object.author == user)"),
     ],
     order: ['createdAt' => 'DESC']
 )]
@@ -53,7 +54,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Comment
 {
     use UuidTrait;
-    use TimestampableTrait;
+    use TimestampableTrait; // ✅ Utilisation du trait sans redéfinition
 
     #[ORM\Column(type: 'text')]
     #[Assert\NotBlank]
@@ -68,4 +69,5 @@ class Comment
     #[ApiProperty(readable: true, writable: false)]
     #[Groups(['comment:read'])]
     public ?User $author = null;
+
 }

@@ -1,38 +1,41 @@
 security:
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+
     providers:
         app_user_provider:
             entity:
                 class: App\Entity\User
                 property: email
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
         api_login:
-            pattern: /api/login
+            pattern: ^/api/login
             stateless: true
             provider: app_user_provider
             json_login:
-                check_path: api_login
+                check_path: /api/login
                 username_path: 'email'
+                password_path: 'password'
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+
         api:
             pattern: ^/api/
-            provider: app_user_provider
             stateless: true
-            custom_authenticators:
-                - App\Security\Authenticator\TokenAuthenticator
+            provider: app_user_provider
+            jwt: ~
+
         main:
             lazy: true
             provider: app_user_provider
+
     access_control:
-        # - { path: ^/api, roles: ROLE_USER }
-    role_hierarchy:
-        ROLE_USER: [PUBLIC_ACCESS]
-        ROLE_EDITOR: [ROLE_USER]
-        ROLE_AUTHOR: [ROLE_EDITOR]
-        ROLE_ADMIN: [ROLE_AUTHOR]
+        - { path: ^/api/users, roles: ROLE_USER }
 
 when@test:
     security:

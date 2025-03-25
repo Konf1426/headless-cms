@@ -4,30 +4,31 @@ declare(strict_types=1);
 
 namespace App\Api\Resource;
 
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+
 class CreateContent
 {
-    /**
-     * @var string
-     */
-    public string $title;
+    #[Assert\NotBlank]
+    #[Groups(['content:create'])]
+    public string $title = '';
 
-    /**
-     * @var string|null
-     */
-    public ?string $content = null;
+    #[Groups(['content:create'])]
+    public ?string $metaTitle = null;
 
-    /**
-     * @var string|null
-     */
+    #[Groups(['content:create'])]
     public ?string $metaDescription = null;
 
-    /**
-     * @var string[]
-     */
-    public ?array $tags = null;
+    #[Assert\NotBlank]
+    #[Groups(['content:create'])]
+    public string $content = '';
 
-    /**
-     * @var string|null
-     */
-    public ?string $cover = null;
+    #[Groups(['content:create'])]
+    public ?string $description = null;
+
+    #[Groups(['content:create'])]
+    public ?array $tags = [];
+
+    #[Groups(['content:create'])]
+    public ?string $author = null; // Ex: /api/users/uuid
 }
