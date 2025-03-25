@@ -96,11 +96,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-<<<<<<< HEAD
-    /**
-     * @see UserInterface
-     */
-=======
->>>>>>> fd66fed (Correction back pour article et debut commentaires)
     public function eraseCredentials(): void {}
 }

@@ -47,9 +47,10 @@ readonly class UploadAction
         $file->move($this->projectDir.'/public/upload', $path);
 
         $upload = new Upload();
-        $upload->filename = $file->getClientOriginalName();
-        $upload->path = '/upload/' . $path;
-        $upload->mimeType = $file->getClientMimeType();
+        $upload->setFilename($file->getClientOriginalName());
+        $upload->setPath('/upload/' . $path);
+        $upload->setMimeType($file->getClientMimeType());
+
 
         $this->em->persist($upload);
         $this->em->flush();

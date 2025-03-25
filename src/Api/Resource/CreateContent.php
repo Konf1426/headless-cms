@@ -6,6 +6,7 @@ namespace App\Api\Resource;
 
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Metadata\ApiProperty;
 
 class CreateContent
 {
@@ -31,4 +32,8 @@ class CreateContent
 
     #[Groups(['content:create'])]
     public ?string $author = null; // Ex: /api/users/uuid
+
+    #[Groups(['content:create'])]
+    #[ApiProperty(types: ['https://schema.org/ImageObject'])]
+    public ?string $cover = null; // URL ou chemin de l'image
 }

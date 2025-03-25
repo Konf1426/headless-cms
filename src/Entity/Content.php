@@ -36,7 +36,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new Post(
             normalizationContext: ['groups' => ['content:read']],
-            denormalizationContext: ['groups' => ['content:create']], // Ajouté pour hydratation
+            denormalizationContext: ['groups' => ['content:create']],
             security: RoleEnum::IS_GRANTED_ADMIN,
             input: CreateContent::class,
             processor: CreateContentProcessor::class
@@ -64,7 +64,8 @@ class Content
     public string $title;
 
     #[ORM\ManyToOne(targetEntity: Upload::class)]
-    #[Groups(['content:read', 'content:update'])]
+    #[ORM\JoinColumn(nullable: true)]
+    #[Groups(['content:read', 'content:create', 'content:update'])]
     public ?Upload $cover = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
