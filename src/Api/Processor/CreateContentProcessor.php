@@ -11,6 +11,7 @@ use App\Entity\Upload;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -25,13 +26,6 @@ final readonly class CreateContentProcessor implements ProcessorInterface
         private Security $security
     ) {}
 
-    /**
-     * @param mixed $data
-     * @param Operation $operation
-     * @param array<string, mixed> $uriVariables
-     * @param array<string, mixed> $context
-     * @return object
-     */
     public function process(
         mixed $data,
         Operation $operation,
@@ -44,23 +38,27 @@ final readonly class CreateContentProcessor implements ProcessorInterface
         $content = new Content();
         $content->title = $data->title;
         $content->content = $data->content;
-        $content->metaDescription = $data->metaDescription;
-        $content->tags = $data->tags;
-
-        // ✅ Ajout des champs manquants
         $content->metaTitle = $data->metaTitle ?? null;
         $content->metaDescription = $data->metaDescription ?? null;
         $content->description = $data->description ?? null;
+        $content->tags = $data->tags;
 
         $content->author = $user;
         $content->setCreatedAt();
         $content->setUpdatedAt();
 
         if ($data->cover) {
-            $upload = $this->em->getRepository(Upload::class)->find($data->cover);
-            if (!$upload) {
-                throw new InvalidArgumentException('Upload not found');
+            $uploadId = basename($data->cover);
+
+            if (!Uuid::isValid($uploadId)) {
+                throw new InvalidArgumentException('Invalid UUID for cover image');
             }
+
+            $upload = $this->em->getRepository(Upload::class)->find($uploadId);
+            if (!$upload) {
+                throw new InvalidArgumentException('Cover image not found');
+            }
+
             $content->cover = $upload;
         }
 

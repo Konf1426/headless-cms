@@ -16,7 +16,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * @implements ProcessorInterface<Comment, Operation>
+ * @implements ProcessorInterface<CreateComment, Operation>
  */
 final readonly class CreateCommentProcessor implements ProcessorInterface
 {
@@ -26,13 +26,6 @@ final readonly class CreateCommentProcessor implements ProcessorInterface
         private Security $security
     ) {}
 
-    /**
-     * @param mixed $data
-     * @param Operation $operation
-     * @param array<string, mixed> $uriVariables
-     * @param array<string, mixed> $context
-     * @return object
-     */
     public function process(
         mixed $data,
         Operation $operation,
@@ -42,11 +35,15 @@ final readonly class CreateCommentProcessor implements ProcessorInterface
         /** @var ?User $user */
         $user = $this->security->getUser();
 
+        if (!$user) {
+            throw new InvalidArgumentException('Utilisateur non authentifié.');
+        }
+
         /** @var CreateComment $data */
         $content = $this->em->getRepository(Content::class)->findOneBy(['slug' => $data->contentSlug]);
 
         if (!$content) {
-            throw new InvalidArgumentException('Content not found');
+            throw new InvalidArgumentException('Article introuvable.');
         }
 
         $comment = new Comment();
@@ -56,14 +53,14 @@ final readonly class CreateCommentProcessor implements ProcessorInterface
         $comment->setCreatedAt();
         $comment->setUpdatedAt();
 
-        $violations = $this->validator->validate($content);
+        $violations = $this->validator->validate($comment);
         if ($violations->count() > 0) {
-            throw new InvalidArgumentException((string) $violations->get(0)->getMessage());
+            throw new InvalidArgumentException((string) $violations->get(0)?->getMessage());
         }
-        
 
         $this->em->persist($comment);
         $this->em->flush();
+
         return $comment;
     }
 }

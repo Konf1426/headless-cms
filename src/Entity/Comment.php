@@ -62,8 +62,9 @@ class Comment
     public string $message;
 
     #[ORM\ManyToOne(targetEntity: Content::class)]
-    #[Groups(['comment:read'])]
+    #[Groups(['comment:read', 'comment:write'])]
     public ?Content $content = null;
+
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ApiProperty(readable: true, writable: false)]
