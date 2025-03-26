@@ -30,7 +30,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     operations: [
         new GetCollection,
         new Get(security: RoleEnum::IS_ADMIN_OR_USER_OBJECT),
-        new Post(input: CreateUser::class, processor: CreateUserProcessor::class),
+        new Post(input: CreateUser::class, processor: CreateUserProcessor::class, security: 'is_granted("PUBLIC_ACCESS")'),
         new Patch(
             denormalizationContext: ['groups' => ['user:update']],
             security: RoleEnum::IS_ADMIN_OR_USER_OBJECT
@@ -45,31 +45,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180, nullable: true)]
     #[Assert\Length(min: 1, max: 180)]
-    #[Groups(['comment:read', 'user:update', 'content:read'])]
+    #[Groups(['comment:read', 'user:update', 'content:read', 'user:write'])]
     public ?string $firstname = null;
 
     #[ORM\Column(length: 180, nullable: true)]
     #[Assert\Length(min: 1, max: 180)]
-    #[Groups(['comment:read', 'user:update', 'content:read'])]
+    #[Groups(['comment:read', 'user:update', 'content:read', 'user:write'])]
     public ?string $lastname = null;
 
     #[ORM\Column(length: 180)]
     #[Assert\Email]
     #[Assert\Length(min: 5, max: 180)]
-    #[Groups(['comment:read', 'user:update', 'content:read'])] // ✅ Ajout ici
+    #[Groups(['comment:read', 'user:update', 'content:read', 'user:write'])] // ✅ Ajout ici
     public ?string $email = null;
 
     /**
      * @var string[]
      */
     #[ORM\Column]
-    #[Groups(['user:update'])]
+    #[Groups(['user:update', 'user:write'])]
     public array $roles = [];
 
     #[ORM\Column]
     #[Ignore]
     #[Assert\NotBlank]
     #[Assert\Length(min: 8, max: 255)]
+    #[Groups(['user:update', 'user:write'])]
     public ?string $password = null;
 
     public function getUserIdentifier(): string
